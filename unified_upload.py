@@ -460,7 +460,7 @@ def main():
         elif args.mode == "stats":
             # Show stats
             stats = uploader.get_stats()
-            print(f"\n📊 Upload Statistics")
+            print("\n📊 Upload Statistics")
             print(f"Provider: {stats['provider']}")
             print(f"Total Files: {stats['total_files']}")
             if stats["provider_stats"]:

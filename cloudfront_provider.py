@@ -384,7 +384,7 @@ if __name__ == "__main__":
         provider = CloudFrontProvider()
         stats = provider.get_upload_stats()
         if stats:
-            print(f"📊 Bucket Stats:")
+            print("📊 Bucket Stats:")
             print(f"   Total Objects: {stats.get('total_objects', 'N/A')}")
             print(f"   Total Size: {stats.get('total_size_mb', 'N/A')} MB")
             print(f"   Bucket: {stats.get('bucket', 'N/A')}")

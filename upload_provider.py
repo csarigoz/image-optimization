@@ -114,8 +114,6 @@ class ProviderFactory:
 
             return CloudFrontProvider()
         elif provider_type == "cloudinary":
-            from cloudinary_provider import CloudinaryProvider
-
             # Wrap CloudinaryProvider to match the interface
             return CloudinaryProviderAdapter()
         else:

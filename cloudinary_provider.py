@@ -341,7 +341,7 @@ if __name__ == "__main__":
         provider = CloudinaryProvider()
         stats = provider.get_upload_stats()
         if stats:
-            print(f"📊 Account Stats:")
+            print("📊 Account Stats:")
             print(f"   Credits Used: {stats.get('credits_used', 'N/A')}")
             print(f"   Storage Used: {stats.get('storage', 'N/A')} bytes")
             print(f"   Transformations: {stats.get('transformations', 'N/A')}")
