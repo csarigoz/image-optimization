@@ -5,7 +5,19 @@ All notable changes to the Multi-Provider Image Upload Utility will be documente
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2025-05-28
+## [Unreleased] - Multi-Provider Architecture
+
+### 🚀 Multi-Provider Architecture - Major Refactor
+
+This is a **major breaking change** that introduces support for multiple cloud providers while maintaining backward compatibility for existing CloudFront users.
+
+#### Added
+- **🌐 Cloudinary Integration**: Full Cloudinary provider support with automatic optimization
+  - `cloudinary_provider.py` - Complete Cloudinary implementation
+  - Native Cloudinary SDK integration with proper transformation parameters
+  - Direct URL upload capabilities
+  - Built-in CDN delivery and real-time transformations
+  - Auto-format (`f_auto`) and auto-quality (`q_auto`) optimization
 
 ### Added
 - **AI Alt Text Generation**: Integration with AltText.ai API for automatic alt text generation
@@ -151,8 +163,7 @@ This is a **major breaking change** that introduces support for multiple cloud p
   - Native Cloudinary SDK integration with proper transformation parameters
   - Direct URL upload capabilities
   - Built-in CDN delivery and real-time transformations
-  - Automatic format optimization (`format=auto`, `quality=auto`)
-  - Smart transformation parameters using SDK format (not URL format)
+  - Auto-format (`f_auto`) and auto-quality (`q_auto`) optimization
 
 - **🏗️ Provider Architecture**: Extensible provider system using factory pattern
   - `upload_provider.py` - Abstract base class and provider factory

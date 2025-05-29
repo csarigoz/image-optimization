@@ -1629,3 +1629,55 @@ git push origin refactor/multi-provider-architecture
 
 **For Future Major Features:**
 Always use this workflow instead of direct commits to main. Even for solo projects, this approach maintains code quality and provides a safety net. 
+
+### **Versioning Strategy**
+
+**🎯 Version in Main Branch After Merge**
+
+Follow semantic versioning (MAJOR.MINOR.PATCH) with the following workflow:
+
+#### **In Feature Branches:**
+```bash
+# ✅ DO: Use [Unreleased] in CHANGELOG.md
+## [Unreleased] - Feature Description
+### Added
+- New feature description
+
+# ❌ DON'T: Set specific version numbers in feature branches
+## [2.1.0] - 2025-01-30  # Avoid this in feature branches
+```
+
+#### **In Main Branch After Merge:**
+```bash
+# After successful PR merge, maintainer updates version:
+git checkout main
+git pull origin main
+
+# Update CHANGELOG.md
+## [2.1.0] - 2025-01-30
+### Added
+- New feature description
+
+# Update setup.py or package.json version
+# Tag the release
+git add .
+git commit -m "chore: bump version to 2.1.0"
+git tag -a v2.1.0 -m "Release version 2.1.0"
+git push origin main --tags
+```
+
+#### **Version Number Guidelines:**
+- **MAJOR (X.0.0)**: Breaking changes, API changes, provider architecture changes
+- **MINOR (0.X.0)**: New features, new provider support, backward-compatible changes
+- **PATCH (0.0.X)**: Bug fixes, documentation updates, minor improvements
+
+#### **Who Manages Versions:**
+- **Feature developers**: Use `[Unreleased]` in CHANGELOG.md
+- **Maintainers/Owners**: Set final version numbers after merge
+- **Automated tools**: Consider using conventional commits for auto-versioning
+
+#### **Why This Approach:**
+- ✅ **Prevents version conflicts** between concurrent feature branches
+- ✅ **Ensures sequential version numbers** 
+- ✅ **Centralizes version management** with maintainers
+- ✅ **Allows for last-minute version adjustments** based on final scope
