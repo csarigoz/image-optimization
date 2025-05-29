@@ -8,7 +8,7 @@ allowing the application to support multiple cloud services
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple
 
 
 class UploadProvider(ABC):
@@ -126,6 +126,7 @@ class CloudinaryProviderAdapter(UploadProvider):
     """Adapter to make CloudinaryProvider conform to UploadProvider interface"""
 
     def __init__(self):
+        # Import here to avoid circular imports and unused import warnings
         from cloudinary_provider import CloudinaryProvider
 
         self.provider = CloudinaryProvider()

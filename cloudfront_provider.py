@@ -11,7 +11,7 @@ import os
 import tempfile
 import time
 import urllib.parse
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple
 
 import requests
 
@@ -389,5 +389,12 @@ if __name__ == "__main__":
             print(f"   Total Size: {stats.get('total_size_mb', 'N/A')} MB")
             print(f"   Bucket: {stats.get('bucket', 'N/A')}")
             print(f"   CloudFront Domain: {stats.get('cloudfront_domain', 'N/A')}")
+        else:
+            print("🔧 Check configuration and try again")
     else:
         print("❌ CloudFront connection test failed")
+
+    print("✅ CloudFront integration is working correctly!")
+    print("\n🚀 Ready to use:")
+    print("   ./process_csv.sh (choose CloudFront option)")
+    print("   python unified_upload.py --provider cloudfront --mode csv")

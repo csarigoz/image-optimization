@@ -22,7 +22,7 @@ Usage:
 import os
 import time
 import urllib.parse
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple
 
 try:
     import cloudinary
@@ -345,5 +345,10 @@ if __name__ == "__main__":
             print(f"   Credits Used: {stats.get('credits_used', 'N/A')}")
             print(f"   Storage Used: {stats.get('storage', 'N/A')} bytes")
             print(f"   Transformations: {stats.get('transformations', 'N/A')}")
+        else:
+            print("✅ Cloudinary integration is working correctly!")
+            print("\n🚀 Ready to use:")
+            print("   ./process_csv.sh (choose Cloudinary option)")
+            print("   python unified_upload.py --provider cloudinary --mode csv")
     else:
         print("❌ Cloudinary connection test failed")
