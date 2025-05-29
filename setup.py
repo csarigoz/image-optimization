@@ -205,10 +205,76 @@ def test_alttext_ai():
         return True  # Not critical for basic functionality
 
 
+def test_cloudinary():
+    """Test Cloudinary API connection if configured"""
+    print("\n☁️  Testing Cloudinary connection...")
+
+    try:
+        # Check if Cloudinary is configured in environment
+        from dotenv import load_dotenv
+
+        load_dotenv()
+
+        cloud_name = os.getenv("CLOUDINARY_CLOUD_NAME")
+        api_key = os.getenv("CLOUDINARY_API_KEY")
+        api_secret = os.getenv("CLOUDINARY_API_SECRET")
+
+        if not all([cloud_name, api_key, api_secret]):
+            print("⚠️  Cloudinary credentials not configured (this is optional)")
+            print("   Add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and")
+            print("   CLOUDINARY_API_SECRET to .env file to enable Cloudinary")
+            return True  # Not an error, just not configured
+
+        # Try to import and test
+        from cloudinary_provider import test_cloudinary_connection
+
+        if test_cloudinary_connection():
+            print("✅ Cloudinary API connection successful")
+            return True
+        else:
+            print("❌ Cloudinary API connection failed")
+            print("   Check your credentials in .env file")
+            return False
+
+    except ImportError:
+        print("⚠️  Cloudinary module not available")
+        print("   Install with: pip install cloudinary")
+        return True  # Not critical for basic functionality
+    except Exception as e:
+        print(f"⚠️  Cloudinary test failed: {e}")
+        return True  # Not critical for basic functionality
+
+
+def test_providers():
+    """Test upload providers"""
+    print("\n🔧 Testing upload providers...")
+
+    try:
+        # Test the unified uploader system
+        from unified_upload import UnifiedUploader
+
+        # Check which provider is configured
+        provider_type = os.getenv("UPLOAD_PROVIDER", "cloudfront")
+        print(f"📡 Default provider: {provider_type}")
+
+        # Try to create and test the provider
+        uploader = UnifiedUploader(provider_type)
+        if uploader.test_connection():
+            print(f"✅ {provider_type} provider working correctly")
+            return True
+        else:
+            print(f"❌ {provider_type} provider connection failed")
+            return False
+
+    except Exception as e:
+        print(f"⚠️  Provider test failed: {e}")
+        return False
+
+
 def main():
     """Main setup function"""
-    print("🚀 CloudFront Image Upload Utility Setup")
-    print("=" * 50)
+    print("🚀 Image Upload Utility Setup (CloudFront + Cloudinary)")
+    print("=" * 60)
 
     checks = [
         check_python_version(),
@@ -223,22 +289,37 @@ def main():
     # Check AWS config
     aws_ok = check_aws_config()
 
-    # Test AltText.ai if configured
+    # Test optional services
     alttext_ok = test_alttext_ai()
+    cloudinary_ok = test_cloudinary()
+
+    # Test provider system
+    provider_ok = test_providers()
 
     # Run basic test
     basic_test_ok = run_basic_test()
 
-    print("\n" + "=" * 50)
+    print("\n" + "=" * 60)
     print("📋 Setup Summary:")
 
-    if all(checks) and basic_test_ok and env_ok and aws_ok:
+    if all(checks) and basic_test_ok and env_ok and provider_ok:
         print("✅ Environment setup completed successfully!")
         print("")
         print("🎉 You're ready to start uploading images!")
+
+        # Show available features
+        if aws_ok:
+            print("☁️  CloudFront/S3 provider available")
+        if cloudinary_ok:
+            print("🌐 Cloudinary provider available")
         if alttext_ok:
-            print("📄 Alt text generation is available!")
-        print("Run: ./process_csv.sh")
+            print("📄 Alt text generation is available")
+
+        print("")
+        print("📋 Usage options:")
+        print("   Interactive: ./process_csv.sh")
+        print("   Command line: python unified_upload.py --help")
+        print("   Original: python upload_files.py")
         print("")
         print("📁 File locations:")
         print("   Input:  data/input/images_to_download_and_upload.csv")
@@ -248,9 +329,9 @@ def main():
         print("❌ Setup incomplete. Please fix the issues above.")
         print("")
         print("📋 Next steps:")
-        print("1. Install missing dependencies")
+        print("1. Install missing dependencies: pip install -r requirements.txt")
         print("2. Configure your .env file with API keys")
-        print("3. Test your AWS and AltText.ai connections")
+        print("3. Test your provider connections")
         print("4. Add image URLs to data/input/images_to_download_and_upload.csv")
         sys.exit(1)
 

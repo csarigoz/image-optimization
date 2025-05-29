@@ -3,4 +3,4 @@ description:
 globs: 
 alwaysApply: true
 ---
-Follow the rules in the [PROJECT_RULES.md](mdc:PROJECT_RULES.md) (/PROJECT_RULES.md) file at all times, and keep it up to date.
+Follow the rules in the [PROJECT_RULES.md](mdc:PROJECT_RULES.md) (PROJECT_RULES.md) file at all times, and keep it up to date.

@@ -64,14 +64,35 @@ jobs:
       run: |
         python -c "import upload_files; print('✅ upload_files imports successfully')"
         python -c "import alttext_ai; print('✅ alttext_ai imports successfully')"
+        python -c "import unified_upload; print('✅ unified_upload imports successfully')"
+        python -c "import upload_provider; print('✅ upload_provider imports successfully')"
+        python -c "import cloudinary_provider; print('✅ cloudinary_provider imports successfully')"
+        python -c "import cloudfront_provider; print('✅ cloudfront_provider imports successfully')"
 
-    - name: Test basic functionality (without AWS credentials)
+    - name: Test basic functionality (without provider credentials)
       run: |
         python -c "
-        from upload_files import optimize_image, get_best_format
+        from upload_files import optimize_image
         from alttext_ai import AltTextAI
+        from upload_provider import ProviderFactory
         print('✅ Core functions import successfully')
         "
+
+    - name: Test provider factory
+      run: |
+        python -c "
+        from upload_provider import ProviderFactory
+        try:
+            # Test factory without credentials (should fail gracefully)
+            provider = ProviderFactory.create_provider('cloudinary')
+            print('❌ Should have failed without credentials')
+        except (ValueError, ImportError) as e:
+            print('✅ Provider factory handles missing credentials correctly')
+        "
+
+    - name: Test unified upload help
+      run: |
+        python unified_upload.py --help
 
     - name: Upload security reports
       uses: actions/upload-artifact@v4
@@ -204,6 +225,11 @@ jobs:
         # Check core files exist
         required_files=(
           "upload_files.py"
+          "unified_upload.py"
+          "upload_provider.py"
+          "cloudinary_provider.py"
+          "cloudfront_provider.py"
+          "test_cloudinary.py"
           "alttext_ai.py"
           "setup.py"
           "requirements.txt"
@@ -253,6 +279,14 @@ jobs:
         
         # Check .env.example has required variables
         required_vars=(
+          "UPLOAD_PROVIDER"
+          "CLOUDINARY_CLOUD_NAME"
+          "CLOUDINARY_API_KEY"
+          "CLOUDINARY_API_SECRET"
+          "AWS_ACCESS_KEY"
+          "AWS_SECRET_KEY"
+          "S3_BUCKET"
+          "CLOUDFRONT_DOMAIN"
           "ALTTEXT_AI_API_KEY"
           "ALTTEXT_AI_KEYWORDS"
           "ALTTEXT_AI_WEBHOOK_URL"

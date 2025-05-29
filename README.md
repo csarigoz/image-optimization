@@ -1,30 +1,43 @@
-# CloudFront Image Upload Utility
+# Image Upload Utility (CloudFront + Cloudinary)
 
 > **Created by [Cagri Sarigoz](https://github.com/cagrisarigoz)** | **Open Source** | **MIT License**
 
-A comprehensive tool for downloading, optimizing, and uploading images to AWS S3 with CloudFront distribution. Features automatic image optimization, format conversion, unique URL generation, and **AI-powered alt text generation** for accessibility and SEO.
+A comprehensive tool for downloading, optimizing, and uploading images to **AWS CloudFront/S3** or **Cloudinary**. Features automatic image optimization, format conversion, unique URL generation, and **AI-powered alt text generation** for accessibility and SEO.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
+## 🌟 Multi-Provider Support
+
+Choose between two powerful image delivery platforms:
+
+| Provider | Best For | Key Benefits |
+|----------|----------|-------------|
+| **🌐 Cloudinary** | Most users, easy setup | Automatic optimization, global CDN, dynamic transformations |
+| **☁️ CloudFront/S3** | AWS ecosystem integration | Full control, AWS pricing, existing infrastructure |
+
 ## 🚀 Features
 
-- **Batch Image Processing**: Download images from URLs and upload to S3/CloudFront
-- **Image Optimization**: Automatic resizing, quality adjustment, and format conversion
-- **Smart Format Selection**: Automatically chooses the best format (JPEG, PNG, WebP) for optimal file size
-- **Unique URLs**: Adds timestamps to prevent filename conflicts and ensure cache busting
-- **AI Alt Text Generation**: Generate descriptive alt text using AltText.ai API
-- **REST API**: HTTP endpoints for programmatic access
-- **Interactive CLI**: User-friendly command-line interface
-- **Comprehensive Logging**: Detailed progress tracking and error reporting
+- **🔄 Multi-Provider Support**: Choose between Cloudinary and AWS CloudFront/S3
+- **📦 Batch Image Processing**: Download images from URLs and upload to your chosen provider
+- **🎯 Smart Optimization**: Automatic resizing, quality adjustment, and format conversion
+- **🎨 Format Intelligence**: Automatically chooses the best format (JPEG, PNG, WebP) for optimal file size
+- **⚡ Unique URLs**: Adds timestamps to prevent filename conflicts and ensure cache busting
+- **🤖 AI Alt Text Generation**: Generate descriptive alt text using AltText.ai API
+- **🔌 REST API**: HTTP endpoints for programmatic access
+- **🎮 Interactive CLI**: User-friendly command-line interface with provider selection
+- **📊 Comprehensive Logging**: Detailed progress tracking and error reporting
+- **🌍 Global CDN**: Built-in CDN delivery with both providers
 
 ## 🛠 Installation
 
 ### Prerequisites
 
 - **Python 3.9+** (Recommended: Python 3.13 for best performance)
-- **AWS account** with S3 and CloudFront access
+- **Provider Account**: Choose one or both:
+  - **Cloudinary account** (recommended for most users)
+  - **AWS account** with S3 and CloudFront access
 - **AltText.ai API key** (optional, for alt text generation)
 
 ### Recommended Setup with Python 3.13 Virtual Environment
@@ -164,35 +177,203 @@ deactivate
 ### Requirements
 
 - **Python 3.9+** (Tested on 3.9, 3.10, 3.11, 3.12, 3.13)
-- **AWS account** with S3 and CloudFront access
+- **Provider Account**: Choose one or both:
+  - **Cloudinary account** (recommended for most users)
+  - **AWS account** with S3 and CloudFront access
 - **AltText.ai API key** (optional, for alt text generation)
 
 ## ⚡ Quick Usage
 
-### Interactive CSV Processing
+### 🌐 Cloudinary (Recommended)
+
+**Setup:**
 ```bash
+# 1. Sign up at cloudinary.com and get your credentials
+# 2. Add to .env file:
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key  
+CLOUDINARY_API_SECRET=your_api_secret
+UPLOAD_PROVIDER=cloudinary
+
+# 3. Run interactive setup
 ./process_csv.sh
+# Choose option 2 (Cloudinary) when prompted
 ```
 
-### Direct Python Usage
+**Command Line:**
+```bash
+# Upload from CSV with Cloudinary
+python unified_upload.py --provider cloudinary --mode csv --alt-text
+
+# Upload local files with optimization
+python unified_upload.py --provider cloudinary --mode local --max-width 800
+```
+
+### ☁️ CloudFront/S3 (AWS)
+
+**Setup:**
+```bash
+# 1. Configure AWS credentials in .env:
+AWS_ACCESS_KEY=your_aws_access_key
+AWS_SECRET_KEY=your_aws_secret_key
+S3_BUCKET=your_s3_bucket_name
+CLOUDFRONT_DOMAIN=your_cloudfront_domain
+UPLOAD_PROVIDER=cloudfront
+
+# 2. Run interactive setup
+./process_csv.sh
+# Choose option 1 (CloudFront) when prompted
+```
+
+**Legacy Mode:**
 ```python
+# Use the original upload_files.py for CloudFront
 from upload_files import download_and_upload_from_csv
 
-# Process images with alt text generation
 download_and_upload_from_csv(
     generate_alt_text=True,
     alt_text_keywords="product, ecommerce, lifestyle"
 )
 ```
 
-### REST API
-```bash
-# Start the API server
-export FLASK_RUN=1
-python upload_files.py
+### 🎮 Interactive Mode (All Providers)
 
-# Upload a file
-curl -X POST -F "file=@image.jpg" http://localhost:5000/upload
+The interactive script automatically detects your provider configuration:
+
+```bash
+./process_csv.sh
+
+# The script will:
+# 1. Detect available providers from your .env file
+# 2. Show provider selection menu if both are configured
+# 3. Guide you through optimization settings
+# 4. Process your images with the chosen provider
+```
+
+### 📋 Unified Command Line
+
+The new `unified_upload.py` provides a consistent interface for both providers:
+
+```bash
+# Auto-detect provider from environment (.env file)
+python unified_upload.py --mode csv --alt-text
+
+# Force specific provider (overrides environment)
+python unified_upload.py --provider cloudinary --mode csv --max-width 800 --quality 85
+python unified_upload.py --provider cloudfront --mode csv --max-width 800 --quality 85
+
+# Upload modes
+python unified_upload.py --mode csv         # Process CSV file
+python unified_upload.py --mode local       # Upload local files
+python unified_upload.py --mode stats       # View upload statistics
+python unified_upload.py --mode list        # List uploaded files
+
+# Optimization options
+python unified_upload.py --provider cloudinary --mode csv \
+    --max-width 1200 \
+    --quality 85 \
+    --alt-text \
+    --alt-text-keywords "product,modern,lifestyle"
+
+# Advanced usage
+python unified_upload.py --provider cloudinary --mode csv --no-smart-format --no-timestamp
+```
+
+### 🔄 Provider Comparison
+
+| Feature | Cloudinary | CloudFront/S3 |
+|---------|------------|---------------|
+| **Setup Time** | 5 minutes | 30+ minutes |
+| **Automatic Optimization** | ✅ Built-in | ⚠️ Manual (Pillow) |
+| **Format Selection** | ✅ AI-powered | ⚠️ Rule-based |
+| **Global CDN** | ✅ Included | ✅ CloudFront |
+| **Real-time Transformations** | ✅ URL-based | ❌ Pre-upload only |
+| **Direct URL Upload** | ✅ Native | ⚠️ Download first |
+| **Cost Model** | Usage-based | Storage + bandwidth |
+| **AWS Integration** | ❌ External service | ✅ Native AWS |
+| **Learning Curve** | ⭐⭐ Easy | ⭐⭐⭐⭐ Advanced |
+
+### 🔧 Provider Migration
+
+You can easily switch between providers:
+
+```bash
+# Switch from CloudFront to Cloudinary
+export UPLOAD_PROVIDER=cloudinary
+python unified_upload.py --mode csv
+
+# Switch from Cloudinary to CloudFront  
+export UPLOAD_PROVIDER=cloudfront
+python unified_upload.py --mode csv
+
+# Use both providers (manual selection each time)
+export UPLOAD_PROVIDER=auto
+./process_csv.sh  # Will prompt for provider selection
+```
+
+### 🌐 **Cloudinary Deep Dive**
+
+#### **Why Choose Cloudinary?**
+
+- **⚡ Easy Setup**: 5 minutes vs 30+ minutes for CloudFront
+- **🤖 Automatic Optimization**: Smart format selection (WebP, AVIF) and quality adjustment
+- **🔄 Dynamic Transformations**: Real-time image resizing via URL parameters
+- **📱 Responsive Images**: Automatic device-specific optimization
+- **🌍 Global CDN**: Built-in worldwide delivery
+- **💰 Usage-Based Pricing**: Pay only for what you use
+
+#### **Dynamic URL Transformations**
+
+One of Cloudinary's biggest advantages is URL-based transformations:
+
+```bash
+# Original image
+https://res.cloudinary.com/your_cloud/image/upload/sample.jpg
+
+# Resized to 300px width, auto height
+https://res.cloudinary.com/your_cloud/image/upload/w_300/sample.jpg
+
+# Optimized format and quality
+https://res.cloudinary.com/your_cloud/image/upload/f_auto,q_auto/sample.jpg
+
+# Combined transformations
+https://res.cloudinary.com/your_cloud/image/upload/w_300,h_200,c_fill,f_auto,q_auto/sample.jpg
+```
+
+#### **Migration from CloudFront**
+
+**Gradual Migration Approach:**
+1. Configure both providers in your `.env`
+2. Test Cloudinary with a few images first
+3. Compare performance and costs
+4. Gradually switch traffic
+
+**Bulk Migration:**
+```bash
+# Re-upload existing URLs to Cloudinary
+python unified_upload.py --provider cloudinary --mode csv
+```
+
+#### **Cloudinary Best Practices**
+
+1. **Enable Smart Defaults**: Always use `smart_format=True` for automatic optimization
+2. **Organize with Folders**: Use descriptive folder names for better organization
+3. **Monitor Usage**: Regularly check your Cloudinary dashboard for usage patterns
+4. **Use Responsive URLs**: Take advantage of automatic device optimization
+
+#### **Troubleshooting Cloudinary**
+
+```bash
+# Test Cloudinary connection
+python test_cloudinary.py
+
+# View account usage
+python unified_upload.py --provider cloudinary --mode stats
+
+# Common issues:
+# - Check API quotas in Cloudinary dashboard
+# - Verify image format is supported  
+# - Ensure stable internet connection
 ```
 
 ## 🔧 Configuration
@@ -202,7 +383,15 @@ curl -X POST -F "file=@image.jpg" http://localhost:5000/upload
 Create a `.env` file with your configuration:
 
 ```bash
-# AWS Configuration (Required)
+# Provider Selection
+UPLOAD_PROVIDER=cloudinary  # or 'cloudfront'
+
+# Cloudinary Configuration (if using Cloudinary)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# AWS Configuration (if using CloudFront)
 AWS_ACCESS_KEY=your_aws_access_key
 AWS_SECRET_KEY=your_aws_secret_key
 S3_BUCKET=your_s3_bucket_name
@@ -214,16 +403,25 @@ ALTTEXT_AI_KEYWORDS=default,keywords,for,seo
 ALTTEXT_AI_WEBHOOK_URL=your_webhook_url
 ```
 
-### CSV Input Format
+### Quick Setup Guide
 
-Create `data/input/images_to_download_and_upload.csv`:
+| Provider | Setup Difficulty | Time to Setup | Best For |
+|----------|-----------------|---------------|----------|
+| **Cloudinary** | ⭐⭐ Easy | 5 minutes | Most users, quick setup |
+| **CloudFront** | ⭐⭐⭐⭐ Advanced | 30+ minutes | AWS integration, advanced users |
 
-```csv
-URL
-https://example.com/image1.jpg
-https://example.com/image2.png
-https://example.com/image3.webp
-```
+**Cloudinary Setup:**
+1. Sign up at [cloudinary.com](https://cloudinary.com)
+2. Copy cloud name, API key, and secret from dashboard
+3. Add to `.env` file
+4. Run `python setup.py`
+
+**CloudFront Setup:**
+1. Configure S3 bucket with public read access
+2. Create CloudFront distribution
+3. Set up IAM user with S3 permissions
+4. Add credentials to `.env` file
+5. Run `python setup.py`
 
 ## 🎯 Usage Examples
 
