@@ -22,7 +22,7 @@ Choose between two powerful image delivery platforms:
 - **🔄 Multi-Provider Support**: Choose between Cloudinary and AWS CloudFront/S3
 - **📦 Batch Image Processing**: Download images from URLs and upload to your chosen provider
 - **🎯 Smart Optimization**: Automatic resizing, quality adjustment, and format conversion
-- **🎨 Format Intelligence**: Automatically chooses the best format (JPEG, PNG, WebP) for optimal file size
+- **🎨 Format Intelligence**: Automatically chooses the best format (JPEG, PNG, WebP, AVIF) for optimal file size
 - **⚡ Unique URLs**: Adds timestamps to prevent filename conflicts and ensure cache busting
 - **🤖 AI Alt Text Generation**: Generate descriptive alt text using AltText.ai API
 - **🔌 REST API**: HTTP endpoints for programmatic access
