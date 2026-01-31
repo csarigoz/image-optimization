@@ -177,6 +177,7 @@ deactivate
 ### Requirements
 
 - **Python 3.9+** (Tested on 3.9, 3.10, 3.11, 3.12, 3.13)
+- **AVIF support (optional)**: For CloudFront/S3 smart format conversion to AVIF, install `pillow-avif-plugin` (included in `requirements.txt`) and ensure your environment has AVIF codecs available (common on most modern Linux distributions).
 - **Provider Account**: Choose one or both:
   - **Cloudinary account** (recommended for most users)
   - **AWS account** with S3 and CloudFront access

@@ -229,7 +229,7 @@ class CloudFrontProvider(UploadProvider):
         """Upload an image file with optimization"""
         try:
             # Check if it's an image file
-            if file_name.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp")):
+            if file_name.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif")):
                 # Optimize the image
                 success, optimized_path = self._optimize_image(
                     file_path, max_width, quality, smart_format
@@ -282,7 +282,7 @@ class CloudFrontProvider(UploadProvider):
             # Create headers
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-                "Accept": "image/webp,image/apng,image/*,*/*;q=0.8",
+                "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
                 "Accept-Language": "en-US,en;q=0.9",
                 "Accept-Encoding": "gzip, deflate, br",
                 "Referer": "https://citizenshipper.com/",
