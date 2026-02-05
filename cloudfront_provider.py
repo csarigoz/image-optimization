@@ -239,7 +239,9 @@ class CloudFrontProvider(UploadProvider):
         """Upload an image file with optimization"""
         try:
             # Check if it's an image file
-            if file_name.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif")):
+            if file_name.lower().endswith(
+                (".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif")
+            ):
                 # Optimize the image
                 success, optimized_path = self._optimize_image(
                     file_path, max_width, quality, smart_format

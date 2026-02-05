@@ -351,7 +351,9 @@ def upload_files(
         file_path = os.path.join(UPLOAD_FOLDER, file_name)
 
         # Check if it's an image file
-        if file_name.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif")):
+        if file_name.lower().endswith(
+            (".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif")
+        ):
             # Optimize the image
             success, new_path = optimize_image(
                 file_path, max_width, quality, smart_format
