@@ -20,6 +20,12 @@ try:
     from botocore.exceptions import ClientError
     from PIL import Image
 
+    # Optional: enable AVIF read/write support when pillow-avif-plugin is installed
+    try:
+        import pillow_avif  # noqa: F401
+    except Exception:
+        pass
+
     BOTO3_AVAILABLE = True
 except ImportError:
     BOTO3_AVAILABLE = False
@@ -129,8 +135,8 @@ class CloudFrontProvider(UploadProvider):
     def _get_best_format(
         self, img: Image.Image, original_path: str, quality: int = 82
     ) -> Tuple[bool, str]:
-        """Determine the best format (JPEG, PNG, WebP) based on file size"""
-        formats_to_try = ["JPEG", "PNG", "WEBP"]
+        """Determine the best format (JPEG, PNG, WebP, AVIF) based on file size"""
+        formats_to_try = ["JPEG", "PNG", "WEBP", "AVIF"]
 
         # Skip testing if the image has transparency and we're considering JPEG
         has_transparency = img.mode in ("RGBA", "LA") or (
@@ -164,6 +170,10 @@ class CloudFrontProvider(UploadProvider):
                         test_img.save(temp_file, format=fmt, optimize=True)
                     elif fmt == "WEBP":
                         test_img.save(temp_file, format=fmt, quality=quality, method=6)
+                    elif fmt == "AVIF":
+                        # AVIF uses a quality parameter similar to WebP.
+                        # pillow-avif-plugin adds support for saving AVIF via Pillow.
+                        test_img.save(temp_file, format=fmt, quality=quality)
 
                     # Get file size
                     file_size = os.path.getsize(temp_file)
@@ -229,7 +239,9 @@ class CloudFrontProvider(UploadProvider):
         """Upload an image file with optimization"""
         try:
             # Check if it's an image file
-            if file_name.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp")):
+            if file_name.lower().endswith(
+                (".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif")
+            ):
                 # Optimize the image
                 success, optimized_path = self._optimize_image(
                     file_path, max_width, quality, smart_format
@@ -282,7 +294,7 @@ class CloudFrontProvider(UploadProvider):
             # Create headers
             headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-                "Accept": "image/webp,image/apng,image/*,*/*;q=0.8",
+                "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
                 "Accept-Language": "en-US,en;q=0.9",
                 "Accept-Encoding": "gzip, deflate, br",
                 "Referer": "https://citizenshipper.com/",

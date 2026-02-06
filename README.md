@@ -22,7 +22,7 @@ Choose between two powerful image delivery platforms:
 - **🔄 Multi-Provider Support**: Choose between Cloudinary and AWS CloudFront/S3
 - **📦 Batch Image Processing**: Download images from URLs and upload to your chosen provider
 - **🎯 Smart Optimization**: Automatic resizing, quality adjustment, and format conversion
-- **🎨 Format Intelligence**: Automatically chooses the best format (JPEG, PNG, WebP) for optimal file size
+- **🎨 Format Intelligence**: Automatically chooses the best format (JPEG, PNG, WebP, AVIF) for optimal file size
 - **⚡ Unique URLs**: Adds timestamps to prevent filename conflicts and ensure cache busting
 - **🤖 AI Alt Text Generation**: Generate descriptive alt text using AltText.ai API
 - **🔌 REST API**: HTTP endpoints for programmatic access
@@ -177,6 +177,7 @@ deactivate
 ### Requirements
 
 - **Python 3.9+** (Tested on 3.9, 3.10, 3.11, 3.12, 3.13)
+- **AVIF support (optional)**: For CloudFront/S3 smart format conversion to AVIF, install `pillow-avif-plugin` (included in `requirements.txt`) and ensure your environment has AVIF codecs available (common on most modern Linux distributions).
 - **Provider Account**: Choose one or both:
   - **Cloudinary account** (recommended for most users)
   - **AWS account** with S3 and CloudFront access

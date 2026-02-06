@@ -14,6 +14,12 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from PIL import Image
 
+# Optional: enable AVIF read/write support when pillow-avif-plugin is installed
+try:
+    import pillow_avif  # noqa: F401
+except Exception:
+    pass
+
 # Load environment variables
 load_dotenv()
 
@@ -82,8 +88,8 @@ def save_uploaded_files(uploaded_files):
 
 
 def get_best_format(img, original_format, original_path, quality=DEFAULT_QUALITY):
-    """Determine the best format (JPEG, PNG, WebP) based on file size"""
-    formats_to_try = ["JPEG", "PNG", "WEBP"]
+    """Determine the best format (JPEG, PNG, WebP, AVIF) based on file size"""
+    formats_to_try = ["JPEG", "PNG", "WEBP", "AVIF"]
 
     # Skip testing if the image has transparency and we're considering JPEG
     has_transparency = img.mode in ("RGBA", "LA") or (
@@ -116,6 +122,10 @@ def get_best_format(img, original_format, original_path, quality=DEFAULT_QUALITY
                     test_img.save(temp_file, format=fmt, optimize=True)
                 elif fmt == "WEBP":
                     test_img.save(temp_file, format=fmt, quality=quality, method=6)
+                elif fmt == "AVIF":
+                    # AVIF uses a quality parameter similar to WebP.
+                    # pillow-avif-plugin adds support for saving AVIF via Pillow.
+                    test_img.save(temp_file, format=fmt, quality=quality)
 
                 # Get file size
                 file_size = os.path.getsize(temp_file)
@@ -142,6 +152,8 @@ def get_best_format(img, original_format, original_path, quality=DEFAULT_QUALITY
         extension = ".png"
     elif fmt_name == "WEBP":
         extension = ".webp"
+    elif fmt_name == "AVIF":
+        extension = ".avif"
     else:
         extension = os.path.splitext(original_path)[1]
 
@@ -162,6 +174,8 @@ def get_best_format(img, original_format, original_path, quality=DEFAULT_QUALITY
             save_img.save(new_path, format=fmt_name, optimize=True)
         elif fmt_name == "WEBP":
             save_img.save(new_path, format=fmt_name, quality=quality, method=6)
+        elif fmt_name == "AVIF":
+            save_img.save(new_path, format=fmt_name, quality=quality)
 
         print(f"Converted image from {original_format} to {fmt_name}")
 
@@ -193,6 +207,8 @@ def optimize_image(
                 original_format = "GIF"
             elif ext == ".webp":
                 original_format = "WEBP"
+            elif ext == ".avif":
+                original_format = "AVIF"
             else:
                 original_format = "JPEG"  # Default
 
@@ -218,6 +234,8 @@ def optimize_image(
             format_name = "GIF"
         elif file_ext == ".webp":
             format_name = "WEBP"
+        elif file_ext == ".avif":
+            format_name = "AVIF"
         else:
             format_name = "JPEG"  # Default to JPEG
 
@@ -241,6 +259,8 @@ def optimize_image(
                 img.save(image_path, format=format_name, optimize=True)
             elif format_name == "WEBP":
                 img.save(image_path, format=format_name, quality=quality, method=6)
+            elif format_name == "AVIF":
+                img.save(image_path, format=format_name, quality=quality)
             elif format_name == "GIF":
                 # GIFs are saved as-is to preserve animation
                 pass
@@ -331,7 +351,9 @@ def upload_files(
         file_path = os.path.join(UPLOAD_FOLDER, file_name)
 
         # Check if it's an image file
-        if file_name.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp")):
+        if file_name.lower().endswith(
+            (".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif")
+        ):
             # Optimize the image
             success, new_path = optimize_image(
                 file_path, max_width, quality, smart_format
@@ -520,7 +542,7 @@ def download_and_upload_from_csv(
 
                 # Optimize the image if it's an image file
                 if file_name.lower().endswith(
-                    (".jpg", ".jpeg", ".png", ".gif", ".webp")
+                    (".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif")
                 ):
                     print(
                         f"Optimizing image with max_width={max_width}, quality={quality}, smart_format={smart_format}..."
@@ -619,7 +641,7 @@ def download_and_upload_from_csv(
 
                     # Continue with optimization and upload
                     if file_name.lower().endswith(
-                        (".jpg", ".jpeg", ".png", ".gif", ".webp")
+                        (".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif")
                     ):
                         print(
                             f"Optimizing image with max_width={max_width}, quality={quality}, smart_format={smart_format}..."
@@ -735,7 +757,7 @@ def upload_file_api():
 
     # Optimize the image if it's an image file
     new_filename = filename
-    if filename.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp")):
+    if filename.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif")):
         success, new_path = optimize_image(file_path, max_width, quality, smart_format)
         if success and new_path != file_path:
             # If the file path changed (due to format conversion), update the file name

@@ -57,8 +57,7 @@ jobs:
 
     - name: Check for known security vulnerabilities
       run: |
-        safety check --json --output safety-report.json || true
-        safety check
+        safety check --output json 2>&1 | tee safety-report.json || true
 
     - name: Test import functionality
       run: |
